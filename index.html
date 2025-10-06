@@ -26,122 +26,146 @@
     *{box-sizing:border-box}
     html,body{height:100%}
     body{margin:0;font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;background:var(--bg);color:var(--ink)}
-    header{position:sticky;top:0;background:linear-gradient(180deg, #ffffffee, #ffffffcc 70%, transparent);backdrop-filter:saturate(160%) blur(8px);z-index:10;border-bottom:1px solid var(--border)}
-    .wrap{max-width:1100px;margin:0 auto;padding:18px}
-    h1{margin:4px 0 2px;font-size:28px;letter-spacing:.2px;color:var(--cl-espresso)}
-    .subtitle{margin:0 0 14px;color:var(--muted)}
-
-    .controls{display:grid;grid-template-columns:1.2fr 1fr .9fr 1fr;gap:10px}
-    .control{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px}
-    .label{font-size:12px;color:var(--muted);margin-bottom:6px}
-    input[type="text"],select,input[type="number"],input[type="range"]{
-      width:100%;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;outline:none;color:var(--ink)
+  
+    header{
+      position:sticky;top:0;z-index:10;
+      backdrop-filter:saturate(1.1) blur(6px);
+      background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.6));
+      border-bottom:1px solid var(--border);
     }
-    .ranges{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-    .range{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px}
-    .range .val{font-variant-numeric:tabular-nums}
-    .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-    button{background:var(--cl-accent);border:0;border-radius:12px;padding:10px 12px;font-weight:700;color:#fff;cursor:pointer}
-    .ghost{background:transparent;color:var(--cl-cacao);border:1px solid var(--border)}
+    .wrap{max-width:1000px;margin:0 auto;padding:18px 16px}
 
-    main{padding:14px 0 60px}
-    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-    @media (max-width: 1000px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media (max-width: 680px){
-      .controls{grid-template-columns:1fr 1fr}
-      .ranges{grid-template-columns:1fr 1fr}
-      .grid{grid-template-columns:1fr}
+    h1{margin:0 0 8px;font-size:clamp(20px,3.8vw,34px);line-height:1.1;letter-spacing:-.02em}
+    .sub{color:var(--muted);margin:6px 0 0}
+
+    /* Filtros */
+    .filters{display:grid;grid-template-columns:1fr 140px repeat(6,1fr) 1fr;gap:8px;align-items:end;margin-top:16px}
+    .filters label{font-size:12px;color:var(--muted);display:block;margin:0 0 6px}
+    .filters input[type="text"], .filters select, .filters input[type="number"]{
+      width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:#fff;outline:none
     }
+    .filters input[type="number"]{appearance:textfield}
+    .filters input[type="number"]::-webkit-outer-spin-button,
+    .filters input[type="number"]::-webkit-inner-spin-button{appearance:none;margin:0}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .chip{background:#fff;border:1px dashed var(--border);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--muted)}
+    .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+    .btn{padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer}
+    .btn.secondary{background:transparent}
+    .right{margin-left:auto}
 
-    .card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:8px;box-shadow:0 6px 20px rgba(59,47,47,.06)}
+    /* Leyenda + escala */
+    .legend{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0 18px}
+    .legend .item{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+    .legend .swatch{width:14px;height:14px;border-radius:3px;display:inline-block;border:1px solid var(--border)}
+    .scale{font-size:12px;color:var(--muted);margin-left:auto}
+
+    /* Grid */
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media (max-width:860px){ .grid{grid-template-columns:1fr} }
+
+    /* Card */
+    .card{
+      background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 16px;
+      box-shadow:0 10px 22px rgba(0,0,0,.04);
+    }
     .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .badge{background:var(--cl-espresso);color:#fff;padding:6px 10px;border-radius:12px;font-weight:800;letter-spacing:.2px}
-    .city{font-size:13px;color:var(--muted)}
-    .progress{height:8px;width:100%;background:var(--cl-foam);border:1px solid var(--border);border-radius:999px;overflow:hidden}
-    .bar{height:100%;background:linear-gradient(90deg, var(--cl-accent), #e7c79c)}
-    .meta{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;font-size:12px}
-    .meta div{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px}
+    .name{font-weight:800;letter-spacing:.2px}
+    .city{color:var(--muted);font-size:13px}
+    .badge{
+      display:inline-flex;align-items:center;justify-content:center;min-width:52px;
+      padding:6px 10px;border-radius:999px;color:#fff;font-weight:800;font-variant-numeric:tabular-nums
+    }
+    .meta{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:10px;font-size:13px}
+    .meta b{font-weight:700}
+    .progress{height:10px;background:#f4efe9;border-radius:999px;margin-top:8px;overflow:hidden;border:1px solid var(--border)}
+    .bar{height:100%;width:0%}
 
-    .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-    .chip{background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--muted)}
-
-    footer{color:var(--muted);font-size:12px;padding:24px 0 60px}
-    a{color:var(--cl-espresso)}
+    footer{margin:40px 0 18px;color:var(--muted);font-size:12px;text-align:center}
+    .hint{font-size:12px;color:var(--muted)}
   </style>
 </head>
 <body>
   <header>
     <div class="wrap">
       <h1>Como Latte — Guía de Cafés</h1>
-      <p class="subtitle">Buscador bonito, con filtros por ciudad y categorías ponderadas: Local, Café, Música, Servicio, Ubicación y Precio.</p>
+      <p class="sub">Buscador con filtros (datos de Ignacio & Francisca). Colores por nota:
+        morado ≤ 7,25 · bronce 7,25–7,75 · plateado 7,75–8,35 · dorado 8,35–9,00 · platino > 9,00.</p>
 
-      <div class="controls">
-        <div class="control">
-          <div class="label">Buscar</div>
-          <input id="q" type="text" placeholder="Nombre o ciudad…" />
+      <div class="filters">
+        <div>
+          <label for="q">Buscar</label>
+          <input id="q" type="text" placeholder="Nombre del café o ciudad…" />
         </div>
-        <div class="control">
-          <div class="label">Ciudad</div>
+        <div>
+          <label for="city">Ciudad</label>
           <select id="city"><option value="">Todas</option></select>
         </div>
-        <div class="control">
-          <div class="label">Nota final mínima</div>
-          <input id="minFinal" type="number" min="0" max="10" step="0.1" value="0" />
+        <div>
+          <label for="minFinal">Min. nota final</label>
+          <input id="minFinal" type="number" step="0.1" min="0" max="10" value="0"/>
         </div>
-        <div class="control">
-          <div class="label">Ordenar por</div>
+        <div>
+          <label for="minLocal">Min. Local</label>
+          <input id="minLocal" type="number" step="0.1" min="0" max="10" value="0"/>
+        </div>
+        <div>
+          <label for="minCafe">Min. Café</label>
+          <input id="minCafe" type="number" step="0.1" min="0" max="10" value="0"/>
+        </div>
+        <div>
+          <label for="minMusica">Min. Música</label>
+          <input id="minMusica" type="number" step="0.1" min="0" max="10" value="0"/>
+        </div>
+        <div>
+          <label for="minServicio">Min. Servicio</label>
+          <input id="minServicio" type="number" step="0.1" min="0" max="10" value="0"/>
+        </div>
+        <div>
+          <label for="minUbicacion">Min. Ubicación</label>
+          <input id="minUbicacion" type="number" step="0.1" min="0" max="10" value="0"/>
+        </div>
+        <div>
+          <label for="minPrecio">Min. Precio</label>
+          <input id="minPrecio" type="number" step="0.1" min="0" max="10" value="0"/>
+        </div>
+        <div>
+          <label for="sort">Ordenar</label>
           <select id="sort">
             <option value="NotaFinal-desc">Nota final ↓</option>
             <option value="NotaFinal-asc">Nota final ↑</option>
-            <option value="Café-asc">Nombre A→Z</option>
-            <option value="Ciudad-asc">Ciudad A→Z</option>
+            <option value="Café (35%)-desc">Café ↓</option>
+            <option value="Café (35%)-asc">Café ↑</option>
+            <option value="Local (27,5%)-desc">Local ↓</option>
+            <option value="Local (27,5%)-asc">Local ↑</option>
+            <option value="Precio (7,5%)-desc">Precio ↓</option>
+            <option value="Precio (7,5%)-asc">Precio ↑</option>
           </select>
         </div>
       </div>
 
-      <div class="ranges" style="margin-top:10px">
-        <div class="range">
-          <div class="label">Local (mín)</div>
-          <input id="minLocal" type="range" min="0" max="10" step="0.1" value="0" />
-          <div class="label"><span class="val" id="valLocal">0.0</span></div>
-        </div>
-        <div class="range">
-          <div class="label">Café (mín)</div>
-          <input id="minCafe" type="range" min="0" max="10" step="0.1" value="0" />
-          <div class="label"><span class="val" id="valCafe">0.0</span></div>
-        </div>
-        <div class="range">
-          <div class="label">Música (mín)</div>
-          <input id="minMusica" type="range" min="0" max="10" step="0.1" value="0" />
-          <div class="label"><span class="val" id="valMusica">0.0</span></div>
-        </div>
-        <div class="range">
-          <div class="label">Servicio (mín)</div>
-          <input id="minServicio" type="range" min="0" max="10" step="0.1" value="0" />
-          <div class="label"><span class="val" id="valServicio">0.0</span></div>
-        </div>
-        <div class="range">
-          <div class="label">Ubicación (mín)</div>
-          <input id="minUbicacion" type="range" min="0" max="10" step="0.1" value="0" />
-          <div class="label"><span class="val" id="valUbicacion">0.0</span></div>
-        </div>
-        <div class="range">
-          <div class="label">Precio (mín)</div>
-          <input id="minPrecio" type="range" min="0" max="10" step="0.1" value="0" />
-          <div class="label"><span class="val" id="valPrecio">0.0</span></div>
-        </div>
+      <div class="controls">
+        <div class="chips" id="chips"></div>
+        <div class="right hint" id="count">Resultados: 0</div>
       </div>
 
-      <div class="actions">
-        <input id="file" type="file" accept="application/json" />
-        <button id="reset" class="ghost">Reset filtros</button>
-        <div class="chip" id="count">Resultados: 0</div>
+      <div class="controls">
+        <button class="btn" id="reset">Reset filtros</button>
+        <button class="btn secondary" id="loadJson">Importar JSON</button>
+        <input class="btn" id="file" type="file" accept="application/json" />
       </div>
-      <div class="chips" id="chips"></div>
     </div>
   </header>
 
   <main class="wrap">
+    <div class="legend" id="legend">
+      <div class="item"><span class="swatch" style="background:#6D28D9"></span> ≤ 7,25 Morado</div>
+      <div class="item"><span class="swatch" style="background:#CD7F32"></span> 7,25–7,75 Bronce</div>
+      <div class="item"><span class="swatch" style="background:#C0C0C0"></span> 7,75–8,35 Plateado</div>
+      <div class="item"><span class="swatch" style="background:#FFD700"></span> 8,35–9,00 Dorado</div>
+      <div class="item"><span class="swatch" style="background:#E5E4E2"></span> &gt; 9,00 Platino</div>
+      <div class="scale" id="scale"></div>
+    </div>
     <div class="grid" id="grid"></div>
     <footer>
       Hecho con ❤ por Ignacio & Francisca / Como Latte. Pesos: Local 27,5%, Café 35%, Música 10%, Servicio 7,5%, Ubicación 12,5%, Precio 7,5%.
@@ -149,112 +173,6 @@
     </footer>
   </main>
 
-  <script id="data" type="application/json">[{"Café": "Wanna Place", "Ciudad": "Barcelona", "NotaFinal": 9.03, "Local (27,5%)": 9.75, "Música (10%)": 9.0, "Servicio (7,5%)": 7.5, "Café (35%)": 10.0, "Ubicación (12,5%)": 7.5, "Precio (7,5%)": 6.0, "I": 9.5, "F": 10.0}, {"Café": "Ikenocha fusion", "Ciudad": "Barcelona", "NotaFinal": 8.94, "Local (27,5%)": 8.65, "Música (10%)": 9.25, "Servicio (7,5%)": 8.7, "Café (35%)": 10.0, "Ubicación (12,5%)": 8.85, "Precio (7,5%)": 5.0, "I": 8.8, "F": 8.5}, {"Café": "Bykate", "Ciudad": "Barcelona", "NotaFinal": 8.8, "Local (27,5%)": 9.35, "Música (10%)": 8.5, "Servicio (7,5%)": 8.0, "Café (35%)": 8.75, "Ubicación (12,5%)": 8.0, "Precio (7,5%)": 9.5, "I": 9.2, "F": 9.5}, {"Café": "Annna", "Ciudad": "Sant Feliu de Guíxols", "NotaFinal": 8.78, "Local (27,5%)": 8.75, "Música (10%)": 8.75, "Servicio (7,5%)": 8.5, "Café (35%)": 9.62, "Ubicación (12,5%)": 7.75, "Precio (7,5%)": 7.0, "I": 8.7, "F": 8.8}, {"Café": "Vera cafe", "Ciudad": "Barcelona", "NotaFinal": 8.78, "Local (27,5%)": 9.65, "Música (10%)": 10.0, "Servicio (7,5%)": 7.5, "Café (35%)": 8.25, "Ubicación (12,5%)": 8.6, "Precio (7,5%)": 8.0, "I": 9.5, "F": 9.8}, {"Café": "Rex cafe", "Ciudad": "Barcelona", "NotaFinal": 8.75, "Local (27,5%)": 9.4, "Música (10%)": 9.6, "Servicio (7,5%)": 8.0, "Café (35%)": 8.85, "Ubicación (12,5%)": 8.0, "Precio (7,5%)": 6.75, "I": 9.3, "F": 9.5}, {"Café": "Slitti", "Ciudad": "Barcelona", "NotaFinal": 8.74, "Local (27,5%)": 9.6, "Música (10%)": 7.5, "Servicio (7,5%)": 10.0, "Café (35%)": 9.0, "Ubicación (12,5%)": 8.6, "Precio (7,5%)": 5.0, "I": 9.7, "F": 9.5}, {"Café": "Lot roasters", "Ciudad": "Barcelona", "NotaFinal": 8.71, "Local (27,5%)": 8.75, "Música (10%)": 8.25, "Servicio (7,5%)": 7.0, "Café (35%)": 10.0, "Ubicación (12,5%)": 8.0, "Precio (7,5%)": 6.0, "I": 8.7, "F": 8.8}, {"Café": "Nudes", "Ciudad": "Barcelona", "NotaFinal": 8.67, "Local (27,5%)": 8.75, "Música (10%)": 9.75, "Servicio (7,5%)": 7.0, "Café (35%)": 9.25, "Ubicación (12,5%)": 8.0, "Precio (7,5%)": 7.0, "I": 8.5, "F": 9.0}, {"Café": "Noor coffee gracia", "Ciudad": "Barcelona", "NotaFinal": 8.66, "Local (27,5%)": 8.5, "Música (10%)": 10.0, "Servicio (7,5%)": 9.25, "Café (35%)": 8.5, "Ubicación (12,5%)": 9.0, "Precio (7,5%)": 7.0, "I": 8.5, "F": 8.5}, {"Café": "Jac", "Ciudad": "Barcelona", "NotaFinal": 8.64, "Local (27,5%)": 9.1, "Música (10%)": 8.25, "Servicio (7,5%)": 7.0, "Café (35%)": 9.0, "Ubicación (12,5%)": 8.25, "Precio (7,5%)": 8.1, "I": 9.2, "F": 9.0}, {"Café": "Maldita barra", "Ciudad": "Barcelona", "NotaFinal": 8.59, "Local (27,5%)": 9.6, "Música (10%)": 8.5, "Servicio (7,5%)": 8.0, "Café (35%)": 8.5, "Ubicación (12,5%)": 8.6, "Precio (7,5%)": 6.0, "I": 9.2, "F": 10.0}, {"Café": "Aeroplano Cofe", "Ciudad": "Barcelona", "NotaFinal": 8.57, "Local (27,5%)": 9.5, "Música (10%)": 6.0, "Servicio (7,5%)": 10.0, "Café (35%)": 9.6, "Ubicación (12,5%)": 7.0, "Precio (7,5%)": 5.0, "I": 9.5, "F": 9.5}, {"Café": "Café de l'Arquitecte", "Ciudad": "Barcelona", "NotaFinal": 8.57, "Local (27,5%)": 9.0, "Música (10%)": 7.5, "Servicio (7,5%)": 9.7, "Café (35%)": 8.0, "Ubicación (12,5%)": 9.0, "Precio (7,5%)": 9.25, "I": 9.0, "F": 9.0}, {"Café": "The miners coffee", "Ciudad": "Barcelona", "NotaFinal": 8.56, "Local (27,5%)": 9.0, "Música (10%)": 9.0, "Servicio (7,5%)": 8.5, "Café (35%)": 8.75, "Ubicación (12,5%)": 8.6, "Precio (7,5%)": 5.5, "I": 9.0, "F": 9.0}, {"Café": "Raw", "Ciudad": "Barcelona", "NotaFinal": 8.51, "Local (27,5%)": 7.75, "Música (10%)": 8.0, "Servicio (7,5%)": 9.0, "Café (35%)": 9.0, "Ubicación (12,5%)": 8.6, "Precio (7,5%)": 9.0, "I": 6.5, "F": 9.0}, {"Café": "Roast club", "Ciudad": "Barcelona", "NotaFinal": 8.46, "Local (27,5%)": 8.0, "Música (10%)": 9.0, "Servicio (7,5%)": 9.5, "Café (35%)": 8.75, "Ubicación (12,5%)": 8.5, "Precio (7,5%)": 7.0, "I": 8.5, "F": 7.5}, {"Café": "Chromatic", "Ciudad": "Barcelona", "NotaFinal": 8.44, "Local (27,5%)": 9.7, "Música (10%)": 9.0, "Servicio (7,5%)": 7.25, "Café (35%)": 8.0, "Ubicación (12,5%)": 7.25, "Precio (7,5%)": 8.25, "I": 9.7, "F": 9.7}, {"Café": "Cofi", "Ciudad": "Madrid", "NotaFinal": 8.43, "Local (27,5%)": 8.35, "Música (10%)": 8.75, "Servicio (7,5%)": 9.0, "Café (35%)": 9.0, "Ubicación (12,5%)": 7.0, "Precio (7,5%)": 7.5, "I": 8.0, "F": 8.7}, {"Café": "Hola coffee", "Ciudad": "Madrid", "NotaFinal": 8.43, "Local (27,5%)": 8.0, "Música (10%)": 8.5, "Servicio (7,5%)": 7.5, "Café (35%)": 9.5, "Ubicación (12,5%)": 8.0, "Precio (7,5%)": 6.5, "I": 8.0, "F": 8.0}, {"Café": "Kfika", "Ciudad": "Barcelona", "NotaFinal": 8.42, "Local (27,5%)": 8.85, "Música (10%)": 7.75, "Servicio (7,5%)": 9.0, "Café (35%)": 8.75, "Ubicación (12,5%)": 7.0, "Precio (7,5%)": 8.0, "I": 8.7, "F": 9.0}, {"Café": "Kuji coffee", "Ciudad": "Oporto", "NotaFinal": 8.4, "Local (27,5%)": 8.85, "Música (10%)": 8.15, "Servicio (7,5%)": 8.25, "Café (35%)": 9.3, "Ubicación (12,5%)": 6.0, "Precio (7,5%)": 7.0, "I": 8.7, "F": 9.0}, {"Café": "Noshi coffee", "Ciudad": "Oporto", "NotaFinal": 8.39, "Local (27,5%)": 9.35, "Música (10%)": 8.0, "Servicio (7,5%)": 6.5, "Café (35%)": 7.75, "Ubicación (12,5%)": 9.15, "Precio (7,5%)": 9.0, "I": 9.2, "F": 9.5}, {"Café": "Abyss coffee", "Ciudad": "Barcelona", "NotaFinal": 8.37, "Local (27,5%)": 9.15, "Música (10%)": 9.25, "Servicio (7,5%)": 7.5, "Café (35%)": 8.5, "Ubicación (12,5%)": 7.5, "Precio (7,5%)": 6.0, "I": 9.0, "F": 9.3}, {"Café": "Simpli coffee", "Ciudad": "Oporto", "NotaFinal": 8.36, "Local (27,5%)": 9.4, "Música (10%)": 8.85, "Servicio (7,5%)": 8.0, "Café (35%)": 8.2, "Ubicación (12,5%)": 8.25, "Precio (7,5%)": 5.25, "I": 9.0, "F": 9.8}, {"Café": "Balzac", "Ciudad": "Barcelona", "NotaFinal": 8.36, "Local (27,5%)": 8.8, "Música (10%)": 7.5, "Servicio (7,5%)": 7.5, "Café (35%)": 8.5, "Ubicación (12,5%)": 9.0, "Precio (7,5%)": 7.0, "I": 8.8, "F": 8.8}, {"Café": "Indigo cafe", "Ciudad": "Barcelona", "NotaFinal": 8.35, "Local (27,5%)": 8.25, "Música (10%)": 7.38, "Servicio (7,5%)": 7.0, "Café (35%)": 8.5, "Ubicación (12,5%)": 8.75, "Precio (7,5%)": 10.0, "I": 8.0, "F": 8.5}, {"Café": "Lady badka", "Ciudad": "Barcelona", "NotaFinal": 8.33, "Local (27,5%)": 9.0, "Música (10%)": 8.25, "Servicio (7,5%)": 7.0, "Café (35%)": 8.2, "Ubicación (12,5%)": 8.6, "Precio (7,5%)": 7.5, "I": 9.0, "F": 9.0}, {"Café": "Three marks Coffee", "Ciudad": "Barcelona", "NotaFinal": 8.33, "Local (27,5%)": 8.25, "Música (10%)": 6.5, "Servicio (7,5%)": 8.0, "Café (35%)": 9.25, "Ubicación (12,5%)": 9.0, "Precio (7,5%)": 6.0, "I": 8.5, "F": 8.0}, {"Café": "Camelia art café", "Ciudad": "Barcelona", "NotaFinal": 8.33, "Local (27,5%)": 8.75, "Música (10%)": 8.25, "Servicio (7,5%)": 7.0, "Café (35%)": 8.5, "Ubicación (12,5%)": 8.0, "Precio (7,5%)": 8.0, "I": 8.5, "F": 9.0}, {"Café": "Grace coffee", "Ciudad": "Platja d'Aro", "NotaFinal": 8.33, "Local (27,5%)": 7.92, "Música (10%)": 9.0, "Servicio (7,5%)": 10.0, "Café (35%)": 7.5, "Ubicación (12,5%)": 9.0, "Precio (7,5%)": 10.0, "I": 7.85, "F": 8.0}, {"Café": "Anís café", "Ciudad": "Barcelona", "NotaFinal": 8.33, "Local (27,5%)": 8.25, "Música (10%)": 9.0, "Servicio (7,5%)": 7.25, "Café (35%)": 8.35, "Ubicación (12,5%)": 8.6, "Precio (7,5%)": 8.25, "I": 8.0, "F": 8.5}, {"Café": "Apurado Café", "Ciudad": "Barcelona", "NotaFinal": 8.32, "Local (27,5%)": 8.7, "Música (10%)": 9.0, "Servicio (7,5%)": 7.25, "Café (35%)": 8.75, "Ubicación (12,5%)": 7.0, "Precio (7,5%)": 7.25, "I": 8.5, "F": 8.9}, {"Café": "Osom", "Ciudad": "Barcelona", "NotaFinal": 8.31, "Local (27,5%)": 8.55, "Música (10%)": 8.0, "Servicio (7,5%)": 6.25, "Café (35%)": 9.0, "Ubicación (12,5%)": 7.25, "Precio (7,5%)": 8.5, "I": 8.6, "F": 8.5}, {"Café": "Nomad coffee", "Ciudad": "Barcelona", "NotaFinal": 8.31, "Local (27,5%)": 8.25, "Música (10%)": 7.6, "Servicio (7,5%)": 6.25, "Café (35%)": 9.85, "Ubicación (12,5%)": 6.1, "Precio (7,5%)": 8.0, "I": 8.0, "F": 8.5}, {"Café": "So coffee", "Ciudad": "Oporto", "NotaFinal": 8.27, "Local (27,5%)": 8.35, "Música (10%)": 8.22, "Servicio (7,5%)": 9.5, "Café (35%)": 8.5, "Ubicación (12,5%)": 7.62, "Precio (7,5%)": 6.85, "I": 8.2, "F": 8.5}, {"Café": "Slowmov", "Ciudad": "Barcelona", "NotaFinal": 8.27, "Local (27,5%)": 7.65, "Música (10%)": 7.0, "Servicio (7,5%)": 8.0, "Café (35%)": 9.5, "Ubicación (12,5%)": 7.35, "Precio (7,5%)": 9.0, "I": 7.5, "F": 7.8}, {"Café": "Philosofia", "Ciudad": "Barcelona", "NotaFinal": 8.16, "Local (27,5%)": 9.75, "Música (10%)": 9.25, "Servicio (7,5%)": 8.0, "Café (35%)": 6.5, "Ubicación (12,5%)": 9.25, "Precio (7,5%)": 7.0, "I": 9.5, "F": 10.0}, {"Café": "P88", "Ciudad": "Copenhague", "NotaFinal": 8.16, "Local (27,5%)": 9.85, "Música (10%)": 9.0, "Servicio (7,5%)": 6.0, "Café (35%)": 7.5, "Ubicación (12,5%)": 10.0, "Precio (7,5%)": 3.0, "I": 9.7, "F": 10.0}, {"Café": "T.44", "Ciudad": "Barcelona", "NotaFinal": 8.14, "Local (27,5%)": 7.25, "Música (10%)": 8.0, "Servicio (7,5%)": 9.0, "Café (35%)": 9.05, "Ubicación (12,5%)": 7.4, "Precio (7,5%)": 7.75, "I": 7.5, "F": 7.0}, {"Café": "LA PAPA", "Ciudad": "Barcelona", "NotaFinal": 8.14, "Local (27,5%)": 9.6, "Música (10%)": 9.4, "Servicio (7,5%)": 7.75, "Café (35%)": 7.5, "Ubicación (12,5%)": 7.25, "Precio (7,5%)": 6.0, "I": 9.7, "F": 9.5}, {"Café": "La casa amande", "Ciudad": "Madrid", "NotaFinal": 8.14, "Local (27,5%)": 8.9, "Música (10%)": 7.75, "Servicio (7,5%)": 7.5, "Café (35%)": 8.0, "Ubicación (12,5%)": 8.5, "Precio (7,5%)": 6.5, "I": 8.8, "F": 9.0}, {"Café": "Ay street coffee", "Ciudad": "Oporto", "NotaFinal": 8.12, "Local (27,5%)": 8.75, "Música (10%)": 7.5, "Servicio (7,5%)": 6.0, "Café (35%)": 8.75, "Ubicación (12,5%)": 9.25, "Precio (7,5%)": 4.0, "I": 8.5, "F": 9.0}, {"Café": "Dirty rabbit", "Ciudad": "Sagaro", "NotaFinal": 8.12, "Local (27,5%)": 8.65, "Música (10%)": 7.5, "Servicio (7,5%)": 7.0, "Café (35%)": 7.9, "Ubicación (12,5%)": 8.8, "Precio (7,5%)": 8.0, "I": 8.3, "F": 9.0}, {"Café": "Morrow cafe", "Ciudad": "Barcelona", "NotaFinal": 8.11, "Local (27,5%)": 8.5, "Música (10%)": 6.0, "Servicio (7,5%)": 7.35, "Café (35%)": 8.75, "Ubicación (12,5%)": 8.85, "Precio (7,5%)": 6.0, "I": 8.5, "F": 8.5}, {"Café": "JOMO coffee", "Ciudad": "Barcelona", "NotaFinal": 8.1, "Local (27,5%)": 8.0, "Música (10%)": 8.5, "Servicio (7,5%)": 7.5, "Café (35%)": 8.4, "Ubicación (12,5%)": 7.0, "Precio (7,5%)": 9.0, "I": 8.0, "F": 8.0}, {"Café": "Bonsai cafe", "Ciudad": "Barcelona", "NotaFinal": 8.06, "Local (27,5%)": 8.5, "Música (10%)": 6.0, "Servicio (7,5%)": 9.0, "Café (35%)": 8.75, "Ubicación (12,5%)": 7.5, "Precio (7,5%)": 6.0, "I": 8.5, "F": 8.5}, {"Café": "Saga Coffee", "Ciudad": "Barcelona", "NotaFinal": 8.03, "Local (27,5%)": 8.75, "Música (10%)": 9.0, "Servicio (7,5%)": 7.5, "Café (35%)": 7.25, "Ubicación (12,5%)": 7.75, "Precio (7,5%)": 8.75, "I": 8.5, "F": 9.0}, {"Café": "Central café", "Ciudad": "Barcelona", "NotaFinal": 8.01, "Local (27,5%)": 9.1, "Música (10%)": 8.0, "Servicio (7,5%)": 7.0, "Café (35%)": 7.0, "Ubicación (12,5%)": 9.35, "Precio (7,5%)": 7.5, "I": 9.0, "F": 9.2}, {"Café": "My coffee Porto", "Ciudad": "Oporto", "NotaFinal": 7.97, "Local (27,5%)": 7.75, "Música (10%)": 8.0, "Servicio (7,5%)": 6.5, "Café (35%)": 7.9, "Ubicación (12,5%)": 9.5, "Precio (7,5%)": 8.0, "I": 7.5, "F": 8.0}, {"Café": "Acid cafe", "Ciudad": "Madrid", "NotaFinal": 7.93, "Local (27,5%)": 8.7, "Música (10%)": 8.75, "Servicio (7,5%)": 7.5, "Café (35%)": 7.25, "Ubicación (12,5%)": 8.0, "Precio (7,5%)": 7.5, "I": 8.7, "F": 8.7}, {"Café": "Café de la casa", "Ciudad": "Barcelona", "NotaFinal": 7.9, "Local (27,5%)": 7.4, "Música (10%)": 7.0, "Servicio (7,5%)": 7.75, "Café (35%)": 8.6, "Ubicación (12,5%)": 8.35, "Precio (7,5%)": 7.0, "I": 7.8, "F": 7.0}, {"Café": "DUO", "Ciudad": "Barcelona", "NotaFinal": 7.89, "Local (27,5%)": 7.25, "Música (10%)": 8.5, "Servicio (7,5%)": 7.75, "Café (35%)": 8.35, "Ubicación (12,5%)": 8.0, "Precio (7,5%)": 7.25, "I": 7.5, "F": 7.0}, {"Café": "La cabra", "Ciudad": "Copenhague", "NotaFinal": 7.84, "Local (27,5%)": 8.0, "Música (10%)": 8.25, "Servicio (7,5%)": 7.0, "Café (35%)": 8.5, "Ubicación (12,5%)": 7.5, "Precio (7,5%)": 5.0, "I": 8.0, "F": 8.0}, {"Café": "Sandi Cafe", "Ciudad": "Barcelona", "NotaFinal": 7.82, "Local (27,5%)": 8.5, "Música (10%)": 7.75, "Servicio (7,5%)": 5.5, "Café (35%)": 8.25, "Ubicación (12,5%)": 8.0, "Precio (7,5%)": 5.5, "I": 8.0, "F": 9.0}, {"Café": "Bottega barlie", "Ciudad": "Copenhague", "NotaFinal": 7.8, "Local (27,5%)": 9.75, "Música (10%)": 8.0, "Servicio (7,5%)": 6.5, "Café (35%)": 7.5, "Ubicación (12,5%)": 7.25, "Precio (7,5%)": 4.0, "I": 9.8, "F": 9.7}, {"Café": "Uaala!", "Ciudad": "Barcelona", "NotaFinal": 7.79, "Local (27,5%)": 8.25, "Música (10%)": 8.0, "Servicio (7,5%)": 7.0, "Café (35%)": 7.5, "Ubicación (12,5%)": 9.0, "Precio (7,5%)": 6.0, "I": 8.0, "F": 8.5}, {"Café": "Graspa coffee", "Ciudad": "Barcelona", "NotaFinal": 7.78, "Local (27,5%)": 8.0, "Música (10%)": 6.0, "Servicio (7,5%)": 5.5, "Café (35%)": 8.85, "Ubicación (12,5%)": 7.0, "Precio (7,5%)": 8.0, "I": 8.0, "F": 8.0}, {"Café": "Tos tao", "Ciudad": "Barcelona", "NotaFinal": 7.77, "Local (27,5%)": 7.25, "Música (10%)": 8.25, "Servicio (7,5%)": 6.0, "Café (35%)": 8.5, "Ubicación (12,5%)": 8.0, "Precio (7,5%)": 7.0, "I": 7.0, "F": 7.5}, {"Café": "Café Pendiente", "Ciudad": "Barcelona", "NotaFinal": 7.77, "Local (27,5%)": 9.72, "Música (10%)": 7.75, "Servicio (7,5%)": 7.0, "Café (35%)": 7.0, "Ubicación (12,5%)": 7.0, "Precio (7,5%)": 6.25, "I": 9.65, "F": 9.8}, {"Café": "Onis", "Ciudad": "Barcelona", "NotaFinal": 7.76, "Local (27,5%)": 8.1, "Música (10%)": 9.0, "Servicio (7,5%)": 7.75, "Café (35%)": 7.5, "Ubicación (12,5%)": 7.5, "Precio (7,5%)": 6.5, "I": 8.5, "F": 7.7}, {"Café": "Nook coffee", "Ciudad": "Barcelona", "NotaFinal": 7.75, "Local (27,5%)": 7.5, "Música (10%)": 9.25, "Servicio (7,5%)": 8.0, "Café (35%)": 7.85, "Ubicación (12,5%)": 7.0, "Precio (7,5%)": 7.25, "I": 7.5, "F": 7.5}, {"Café": "La magia", "Ciudad": "Platja d'Aro", "NotaFinal": 7.75, "Local (27,5%)": 8.38, "Música (10%)": 3.25, "Servicio (7,5%)": 6.25, "Café (35%)": 8.75, "Ubicación (12,5%)": 6.75, "Precio (7,5%)": 10.0, "I": 8.25, "F": 8.5}, {"Café": "Oma", "Ciudad": "Barcelona", "NotaFinal": 7.72, "Local (27,5%)": 6.75, "Música (10%)": 6.0, "Servicio (7,5%)": 8.5, "Café (35%)": 9.0, "Ubicación (12,5%)": 8.25, "Precio (7,5%)": 6.0, "I": 6.5, "F": 7.0}, {"Café": "Roses roast coffee", "Ciudad": "Madrid", "NotaFinal": 7.71, "Local (27,5%)": 7.0, "Música (10%)": 8.5, "Servicio (7,5%)": 5.0, "Café (35%)": 9.5, "Ubicación (12,5%)": 7.5, "Precio (7,5%)": 4.0, "I": 7.0, "F": 7.0}, {"Café": "Niwa", "Ciudad": "Barcelona", "NotaFinal": 7.69, "Local (27,5%)": 7.0, "Música (10%)": 8.25, "Servicio (7,5%)": 6.5, "Café (35%)": 8.75, "Ubicación (12,5%)": 6.5, "Precio (7,5%)": 7.75, "I": 7.0, "F": 7.0}, {"Café": "Itnig café (syra coffee)", "Ciudad": "Barcelona", "NotaFinal": 7.68, "Local (27,5%)": 6.75, "Música (10%)": 6.75, "Servicio (7,5%)": 5.25, "Café (35%)": 9.35, "Ubicación (12,5%)": 6.5, "Precio (7,5%)": 9.0, "I": 6.5, "F": 7.0}, {"Café": "Sitio", "Ciudad": "Barcelona", "NotaFinal": 7.68, "Local (27,5%)": 7.25, "Música (10%)": 8.0, "Servicio (7,5%)": 7.75, "Café (35%)": 8.75, "Ubicación (12,5%)": 6.75, "Precio (7,5%)": 5.25, "I": 7.5, "F": 7.0}, {"Café": "Nude project café (boy good news)", "Ciudad": "Barcelona", "NotaFinal": 7.65, "Local (27,5%)": 8.5, "Música (10%)": 8.0, "Servicio (7,5%)": 5.0, "Café (35%)": 8.0, "Ubicación (12,5%)": 6.5, "Precio (7,5%)": 7.0, "I": 8.5, "F": 8.5}, {"Café": "Ruma's coffee", "Ciudad": "Barcelona", "NotaFinal": 7.64, "Local (27,5%)": 6.85, "Música (10%)": 8.0, "Servicio (7,5%)": 7.0, "Café (35%)": 8.4, "Ubicación (12,5%)": 8.8, "Precio (7,5%)": 5.25, "I": 7.0, "F": 6.7}, {"Café": "Masamune coffee", "Ciudad": "Madrid", "NotaFinal": 7.64, "Local (27,5%)": 7.0, "Música (10%)": 7.0, "Servicio (7,5%)": 7.0, "Café (35%)": 9.0, "Ubicación (12,5%)": 6.5, "Precio (7,5%)": 7.0, "I": 7.0, "F": 7.0}, {"Café": "The Llama café", "Ciudad": "Barcelona", "NotaFinal": 7.63, "Local (27,5%)": 7.75, "Música (10%)": 8.0, "Servicio (7,5%)": 6.5, "Café (35%)": 7.6, "Ubicación (12,5%)": 7.0, "Precio (7,5%)": 9.0, "I": 7.5, "F": 8.0}, {"Café": "Right side coffee", "Ciudad": "Barcelona", "NotaFinal": 7.62, "Local (27,5%)": 8.25, "Música (10%)": 8.0, "Servicio (7,5%)": 6.0, "Café (35%)": 7.0, "Ubicación (12,5%)": 9.0, "Precio (7,5%)": 7.0, "I": 8.5, "F": 8.0}, {"Café": "Ombú", "Ciudad": "Barcelona", "NotaFinal": 7.62, "Local (27,5%)": 7.7, "Música (10%)": 5.0, "Servicio (7,5%)": 8.0, "Café (35%)": 8.5, "Ubicación (12,5%)": 7.5, "Precio (7,5%)": 6.5, "I": 7.7, "F": 7.7}, {"Café": "Elocuente café", "Ciudad": "Barcelona", "NotaFinal": 7.6, "Local (27,5%)": 8.0, "Música (10%)": 8.75, "Servicio (7,5%)": 8.4, "Café (35%)": 8.25, "Ubicación (12,5%)": 8.05, "Precio (7,5%)": 7.0, "I": 8.0, "F": 8.0}, {"Café": "Maison coffee", "Ciudad": "Barcelona", "NotaFinal": 7.58, "Local (27,5%)": 7.75, "Música (10%)": 7.5, "Servicio (7,5%)": 6.25, "Café (35%)": 8.6, "Ubicación (12,5%)": 5.25, "Precio (7,5%)": 7.5, "I": 8.0, "F": 7.5}, {"Café": "Oma café", "Ciudad": "Barcelona", "NotaFinal": 7.56, "Local (27,5%)": 7.75, "Música (10%)": 7.0, "Servicio (7,5%)": 5.0, "Café (35%)": 8.0, "Ubicación (12,5%)": 8.1, "Precio (7,5%)": 7.25, "I": 7.5, "F": 8.0}, {"Café": "Nola kitchen", "Ciudad": "Oporto", "NotaFinal": 7.55, "Local (27,5%)": 7.5, "Música (10%)": 7.75, "Servicio (7,5%)": 8.25, "Café (35%)": 8.0, "Ubicación (12,5%)": 6.75, "Precio (7,5%)": 6.0, "I": 7.5, "F": 7.5}, {"Café": "Cafe labath", "Ciudad": "Barcelona", "NotaFinal": 7.54, "Local (27,5%)": 9.25, "Música (10%)": 8.5, "Servicio (7,5%)": 5.0, "Café (35%)": 7.35, "Ubicación (12,5%)": 6.6, "Precio (7,5%)": 5.0, "I": 9.3, "F": 9.2}, {"Café": "Blackbird coffee", "Ciudad": "Barcelona", "NotaFinal": 7.52, "Local (27,5%)": 7.0, "Música (10%)": 8.25, "Servicio (7,5%)": 7.75, "Café (35%)": 7.75, "Ubicación (12,5%)": 7.0, "Precio (7,5%)": 8.0, "I": 7.0, "F": 7.0}, {"Café": "The coffee", "Ciudad": "Barcelona", "NotaFinal": 7.51, "Local (27,5%)": 7.5, "Música (10%)": 8.0, "Servicio (7,5%)": 6.0, "Café (35%)": 7.5, "Ubicación (12,5%)": 9.0, "Precio (7,5%)": 6.0, "I": 7.5, "F": 7.5}, {"Café": "Noah's", "Ciudad": "Barcelona", "NotaFinal": 7.49, "Local (27,5%)": 6.75, "Música (10%)": 7.0, "Servicio (7,5%)": 7.0, "Café (35%)": 8.25, "Ubicación (12,5%)": 7.7, "Precio (7,5%)": 7.5, "I": 7.0, "F": 6.5}, {"Café": "La Tosta", "Ciudad": "Barcelona", "NotaFinal": 7.48, "Local (27,5%)": 7.25, "Música (10%)": 6.0, "Servicio (7,5%)": 4.0, "Café (35%)": 8.0, "Ubicación (12,5%)": 9.5, "Precio (7,5%)": 8.0, "I": 7.5, "F": 7.0}, {"Café": "Horoscoffee", "Ciudad": "Barcelona", "NotaFinal": 7.47, "Local (27,5%)": 6.75, "Música (10%)": 8.25, "Servicio (7,5%)": 9.1, "Café (35%)": 7.5, "Ubicación (12,5%)": 8.25, "Precio (7,5%)": 6.0, "I": 7.0, "F": 6.5}, {"Café": "Fauna café", "Ciudad": "Barcelona", "NotaFinal": 7.42, "Local (27,5%)": 8.85, "Música (10%)": 7.4, "Servicio (7,5%)": 5.5, "Café (35%)": 6.5, "Ubicación (12,5%)": 8.85, "Precio (7,5%)": 6.0, "I": 8.7, "F": 9.0}, {"Café": "Pécora", "Ciudad": "Barcelona", "NotaFinal": 7.4, "Local (27,5%)": 8.75, "Música (10%)": 8.75, "Servicio (7,5%)": 6.75, "Café (35%)": 7.0, "Ubicación (12,5%)": 4.5, "Precio (7,5%)": 8.0, "I": 8.0, "F": 9.5}, {"Café": "Flying monkeys", "Ciudad": "Barcelona", "NotaFinal": 7.4, "Local (27,5%)": 8.0, "Música (10%)": 5.0, "Servicio (7,5%)": 6.0, "Café (35%)": 8.25, "Ubicación (12,5%)": 8.5, "Precio (7,5%)": 4.0, "I": 8.0, "F": 8.0}, {"Café": "La fábrica", "Ciudad": "Oporto", "NotaFinal": 7.35, "Local (27,5%)": 6.75, "Música (10%)": 5.5, "Servicio (7,5%)": 6.0, "Café (35%)": 8.5, "Ubicación (12,5%)": 8.0, "Precio (7,5%)": 6.88, "I": 6.5, "F": 7.0}, {"Café": "Hidden coffee", "Ciudad": "Barcelona", "NotaFinal": 7.3, "Local (27,5%)": 8.25, "Música (10%)": 8.65, "Servicio (7,5%)": 8.0, "Café (35%)": 6.75, "Ubicación (12,5%)": 7.25, "Precio (7,5%)": 4.0, "I": 8.0, "F": 8.5}, {"Café": "Fiket", "Ciudad": "Barcelona", "NotaFinal": 7.28, "Local (27,5%)": 8.6, "Música (10%)": 8.0, "Servicio (7,5%)": 6.5, "Café (35%)": 6.0, "Ubicación (12,5%)": 8.65, "Precio (7,5%)": 6.0, "I": 8.5, "F": 8.7}, {"Café": "Ambu coffee", "Ciudad": "Madrid", "NotaFinal": 7.22, "Local (27,5%)": 6.0, "Música (10%)": 6.25, "Servicio (7,5%)": 8.0, "Café (35%)": 8.85, "Ubicación (12,5%)": 7.0, "Precio (7,5%)": 5.0, "I": 6.0, "F": 6.0}, {"Café": "Salvaje cafe", "Ciudad": "Barcelona", "NotaFinal": 7.21, "Local (27,5%)": 7.5, "Música (10%)": 5.5, "Servicio (7,5%)": 7.5, "Café (35%)": 7.75, "Ubicación (12,5%)": 7.0, "Precio (7,5%)": 6.0, "I": 7.5, "F": 7.5}, {"Café": "Ugo's corner", "Ciudad": "Barcelona", "NotaFinal": 7.16, "Local (27,5%)": 7.0, "Música (10%)": 8.0, "Servicio (7,5%)": 6.0, "Café (35%)": 7.0, "Ubicación (12,5%)": 7.5, "Precio (7,5%)": 8.0, "I": 7.0, "F": 7.0}, {"Café": "Citizen cafe", "Ciudad": "Barcelona", "NotaFinal": 7.16, "Local (27,5%)": 7.25, "Música (10%)": 5.5, "Servicio (7,5%)": 7.0, "Café (35%)": 7.0, "Ubicación (12,5%)": 8.5, "Precio (7,5%)": 7.75, "I": 7.5, "F": 7.0}, {"Café": "Delta The Coffee House Experience Porto", "Ciudad": "Oporto", "NotaFinal": 7.11, "Local (27,5%)": 7.75, "Música (10%)": 5.5, "Servicio (7,5%)": 6.0, "Café (35%)": 6.88, "Ubicación (12,5%)": 9.0, "Precio (7,5%)": 6.0, "I": 8.0, "F": 7.5}, {"Café": "Onyva Coffee Galvany", "Ciudad": "Barcelona", "NotaFinal": 7.06, "Local (27,5%)": 6.5, "Música (10%)": 7.5, "Servicio (7,5%)": 7.25, "Café (35%)": 8.0, "Ubicación (12,5%)": 7.0, "Precio (7,5%)": 4.0, "I": 6.0, "F": 7.0}, {"Café": "Spice cafe", "Ciudad": "Barcelona", "NotaFinal": 6.97, "Local (27,5%)": 6.5, "Música (10%)": 7.65, "Servicio (7,5%)": 6.0, "Café (35%)": 7.4, "Ubicación (12,5%)": 5.0, "Precio (7,5%)": 10.0, "I": 7.0, "F": 6.0}, {"Café": "Vitrina café", "Ciudad": "Barcelona", "NotaFinal": 6.79, "Local (27,5%)": 5.5, "Música (10%)": 6.0, "Servicio (7,5%)": 6.0, "Café (35%)": 7.5, "Ubicación (12,5%)": 7.0, "Precio (7,5%)": 9.75, "I": 6.0, "F": 5.0}, {"Café": "Mono", "Ciudad": "Barcelona", "NotaFinal": 6.64, "Local (27,5%)": 8.0, "Música (10%)": 7.15, "Servicio (7,5%)": 5.25, "Café (35%)": 6.5, "Ubicación (12,5%)": 4.25, "Precio (7,5%)": 7.0, "I": 8.0, "F": 8.0}, {"Café": "Súper onda", "Ciudad": "Barcelona", "NotaFinal": 6.49, "Local (27,5%)": 5.5, "Música (10%)": 8.0, "Servicio (7,5%)": 6.0, "Café (35%)": 6.5, "Ubicación (12,5%)": 6.25, "Precio (7,5%)": 9.0, "I": 5.0, "F": 6.0}, {"Café": "Poblenou fresh coffee roaster", "Ciudad": "Barcelona", "NotaFinal": 5.98, "Local (27,5%)": 6.0, "Música (10%)": 6.0, "Servicio (7,5%)": 3.0, "Café (35%)": 6.25, "Ubicación (12,5%)": 6.9, "Precio (7,5%)": 6.0, "I": 6.0, "F": 6.0}, {"Café": "La Cala", "Ciudad": "Barcelona", "NotaFinal": 5.89, "Local (27,5%)": 6.0, "Música (10%)": 4.5, "Servicio (7,5%)": 3.25, "Café (35%)": 5.75, "Ubicación (12,5%)": 7.0, "Precio (7,5%)": 8.75, "I": 6.0, "F": 6.0}]</script>
+  <!-- Embed JSON de datos (puedes pegar aquí tu export del Excel como JSON) -->
+  <script id="data" type="application/json">[{"Café": "Wanna Planet", "Ciudad": "Barcelona", "I": 8.5, "F": 8.9, "NotaFinal": 8.85, "Local (27,5%)": 8.8, "Música (10%)": 7.5, "Servicio (7,5%)": 7.5, "Café (35%)": 9.2, "Ubicación (12,5%)": 9.0, "Precio (7,5%)": 8.0}, {"Café": "Three Marks", "Ciudad": "Barcelona", "I": 8.2, "F": 8.4, "NotaFinal": 8.35, "Local (27,5%)": 8.5, "Música (10%)": 8.0, "Servicio (7,5%)": 8.0, "Café (35%)": 8.6, "Ubicación (12,5%)": 8.8, "Precio (7,5%)": 7.2}, {"Café": "Nomad", "Ciudad": "Barcelona", "I": 8.8, "F": 9.1, "NotaFinal": 9.05, "Local (27,5%)": 9.0, "Música (10%)": 8.5, "Servicio (7,5]()
 
-  <script>
-    const $ = id => document.getElementById(id);
-    const num = v => typeof v === 'number' ? v : (parseFloat(v) || 0);
-    const uniq = a => [...new Set(a)];
-
-    let DATA = [];
-
-    function loadInitial(){
-      try{ DATA = JSON.parse($("data").textContent); }catch(e){ DATA = []; }
-    }
-    function populateCities(){
-      const sel = $("city");
-      const cities = uniq(DATA.map(r=>r['Ciudad']).filter(Boolean)).sort((a,b)=> a.localeCompare(b));
-      sel.innerHTML = '<option value="">Todas</option>' + cities.map(c=>`<option value="${c}">${c}</option>`).join('');
-    }
-    function activeChips(q, city, mins){
-      const chips = [];
-      if(q) chips.push(`Buscar: "${q}"`);
-      if(city) chips.push(`Ciudad: ${city}`);
-      Object.entries(mins).forEach(([k,v])=>{ if(v>0){ chips.push(`${k} ≥ ${v.toFixed(1)}`); }});
-      $("chips").innerHTML = chips.map(t=>`<span class="chip">${t}</span>`).join('');
-    }
-    function render(){
-      const q = $("q").value.trim().toLowerCase();
-      const city = $("city").value;
-      const mins = {
-        'Nota final': num($("minFinal").value),
-        'Local': num($("minLocal").value),
-        'Café': num($("minCafe").value),
-        'Música': num($("minMusica").value),
-        'Servicio': num($("minServicio").value),
-        'Ubicación': num($("minUbicacion").value),
-        'Precio': num($("minPrecio").value),
-      };
-      const [key,dir] = $("sort").value.split('-');
-
-      let rows = DATA.filter(r =>
-        (!q || r['Café'].toLowerCase().includes(q) || (r['Ciudad']||'').toLowerCase().includes(q)) &&
-        (!city || r['Ciudad']===city) &&
-        (r['NotaFinal']||0) >= mins['Nota final'] &&
-        (r['Local (27,5%)']||0) >= mins['Local'] &&
-        (r['Café (35%)']||0) >= mins['Café'] &&
-        (r['Música (10%)']||0) >= mins['Música'] &&
-        (r['Servicio (7,5%)']||0) >= mins['Servicio'] &&
-        (r['Ubicación (12,5%)']||0) >= mins['Ubicación'] &&
-        (r['Precio (7,5%)']||0) >= mins['Precio']
-      );
-
-      rows.sort((a,b)=>{
-        const A = a[key] ?? '';
-        const B = b[key] ?? '';
-        if(typeof A === 'number' && typeof B === 'number') return dir==='asc' ? A-B : B-A;
-        return dir==='asc' ? String(A).localeCompare(String(B)) : String(B).localeCompare(String(A));
-      });
-
-      const grid = $("grid"); grid.innerHTML = '';
-      rows.forEach(r=>{
-        const pct = Math.max(0, Math.min(100, (r['NotaFinal']||0)*10));
-        const el = document.createElement('div');
-        el.className = 'card';
-        el.innerHTML = `
-          <div class="row">
-            <strong style="font-size:16px">${r['Café']}</strong>
-            <div class="badge">${(r['NotaFinal']||0).toFixed(2)}</div>
-          </div>
-          <div class="row">
-            <span class="city">${r['Ciudad']||''}</span>
-            <span class="city">I ${(r['I']||0).toFixed(1)} · F ${(r['F']||0).toFixed(1)}</span>
-          </div>
-          <div class="progress"><div class="bar" style="width:${pct}%"></div></div>
-          <div class="meta">
-            <div><b>Local</b><br>${(r['Local (27,5%)']||0).toFixed(1)}</div>
-            <div><b>Café</b><br>${(r['Café (35%)']||0).toFixed(1)}</div>
-            <div><b>Servicio</b><br>${(r['Servicio (7,5%)']||0).toFixed(1)}</div>
-            <div><b>Música</b><br>${(r['Música (10%)']||0).toFixed(1)}</div>
-            <div><b>Ubicación</b><br>${(r['Ubicación (12,5%)']||0).toFixed(1)}</div>
-            <div><b>Precio</b><br>${(r['Precio (7,5%)']||0).toFixed(1)}</div>
-          </div>
-        `;
-        grid.appendChild(el);
-      });
-
-      $("count").textContent = `Resultados: ${rows.length}`;
-      activeChips(q, city, mins);
-    }
-    function attach(){
-      const link = (id, fn) => $(id).addEventListener('input', fn);
-      ['q','city','minFinal','minLocal','minCafe','minMusica','minServicio','minUbicacion','minPrecio','sort'].forEach(id=> link(id, render));
-      const sync = (id, out) => $(id).addEventListener('input', ()=> $(out).textContent = Number($(id).value).toFixed(1));
-      sync('minLocal','valLocal'); sync('minCafe','valCafe'); sync('minMusica','valMusica'); sync('minServicio','valServicio'); sync('minUbicacion','valUbicacion'); sync('minPrecio','valPrecio');
-      $("reset").addEventListener('click', ()=>{
-        $("q").value=''; $("city").value=''; $("minFinal").value=0;
-        ['minLocal','minCafe','minMusica','minServicio','minUbicacion','minPrecio'].forEach(id=> $(id).value=0);
-        ['valLocal','valCafe','valMusica','valServicio','valUbicacion','valPrecio'].forEach(id=> $(id).textContent='0.0');
-        $("sort").value='NotaFinal-desc'; render();
-      });
-      $("file").addEventListener('change', async ev =>{
-        const f = ev.target.files?.[0]; if(!f) return;
-        const txt = await f.text();
-        try{ DATA = JSON.parse(txt); }catch(e){ alert('JSON inválido'); return; }
-        populateCities(); render();
-      });
-    }
-    loadInitial(); populateCities(); attach(); render();
-  </script>
-</body>
-</html>
