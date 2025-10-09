@@ -3,176 +3,454 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Como Latte — Guía de Cafés</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <title>Como Latte · Cafés</title>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Tailwind config with Como Latte palette (edit here)
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cl: {
+              espresso: '#4E342E', // primary dark brown
+              cacao: '#5C4033',
+              caramel: '#C08A56', // accent
+              latte: '#E8DCC8',   // light beige
+              crema: '#F6F1E9',   // off-white
+              dark: '#2B211B',
+              moss: '#6A7F62',    // soft green accent (optional)
+            },
+            // Rating colors (keep category meaning; tweak shades freely)
+            rating: {
+              morado: '#7E57C2',
+              bronce: '#CD7F32',
+              plata: '#B0BFC6',
+              dorado: '#C9B037',
+              platino: '#E5E4E2',
+            }
+          },
+          boxShadow: {
+            soft: '0 6px 20px rgba(0,0,0,0.08)'
+          },
+          borderRadius: {
+            '2xl': '1rem'
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   <style>
-    :root{
-      /* 🎨 Paleta Como Latte */
-      --cl-espresso:#3B2F2F;
-      --cl-cacao:#5A4634;
-      --cl-latte:#D8C3A5;
-      --cl-crema:#F3E9DC;
-      --cl-foam:#FCF8F3;
-      --cl-accent:#C69C6D;
-
-      --bg: linear-gradient(180deg, var(--cl-foam), var(--cl-crema));
-      --surface: #ffffffee;
-      --border: #e7dfd6;
-      --ink: #2b2725;
-      --muted:#6a5f58;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;background:var(--bg);color:var(--ink)}
-  
-    header{
-      position:sticky;top:0;z-index:10;
-      backdrop-filter:saturate(1.1) blur(6px);
-      background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.6));
-      border-bottom:1px solid var(--border);
-    }
-    .wrap{max-width:1000px;margin:0 auto;padding:18px 16px}
-
-    h1{margin:0 0 8px;font-size:clamp(20px,3.8vw,34px);line-height:1.1;letter-spacing:-.02em}
-    .sub{color:var(--muted);margin:6px 0 0}
-
-    /* Filtros */
-    .filters{display:grid;grid-template-columns:1fr 140px repeat(6,1fr) 1fr;gap:8px;align-items:end;margin-top:16px}
-    .filters label{font-size:12px;color:var(--muted);display:block;margin:0 0 6px}
-    .filters input[type="text"], .filters select, .filters input[type="number"]{
-      width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:#fff;outline:none
-    }
-    .filters input[type="number"]{appearance:textfield}
-    .filters input[type="number"]::-webkit-outer-spin-button,
-    .filters input[type="number"]::-webkit-inner-spin-button{appearance:none;margin:0}
-    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-    .chip{background:#fff;border:1px dashed var(--border);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--muted)}
-    .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
-    .btn{padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer}
-    .btn.secondary{background:transparent}
-    .right{margin-left:auto}
-
-    /* Leyenda + escala */
-    .legend{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0 18px}
-    .legend .item{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
-    .legend .swatch{width:14px;height:14px;border-radius:3px;display:inline-block;border:1px solid var(--border)}
-    .scale{font-size:12px;color:var(--muted);margin-left:auto}
-
-    /* Grid */
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-    @media (max-width:860px){ .grid{grid-template-columns:1fr} }
-
-    /* Card */
-    .card{
-      background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 16px;
-      box-shadow:0 10px 22px rgba(0,0,0,.04);
-    }
-    .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .name{font-weight:800;letter-spacing:.2px}
-    .city{color:var(--muted);font-size:13px}
-    .badge{
-      display:inline-flex;align-items:center;justify-content:center;min-width:52px;
-      padding:6px 10px;border-radius:999px;color:#fff;font-weight:800;font-variant-numeric:tabular-nums
-    }
-    .meta{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:10px;font-size:13px}
-    .meta b{font-weight:700}
-    .progress{height:10px;background:#f4efe9;border-radius:999px;margin-top:8px;overflow:hidden;border:1px solid var(--border)}
-    .bar{height:100%;width:0%}
-
-    footer{margin:40px 0 18px;color:var(--muted);font-size:12px;text-align:center}
-    .hint{font-size:12px;color:var(--muted)}
+    html, body, #root { height: 100%; }
+    .marker-label { font: 600 12px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
   </style>
 </head>
-<body>
-  <header>
-    <div class="wrap">
-      <h1>Como Latte — Guía de Cafés</h1>
-      <p class="sub">Buscador con filtros (datos de Ignacio & Francisca). Colores por nota:
-        morado ≤ 7,25 · bronce 7,25–7,75 · plateado 7,75–8,35 · dorado 8,35–9,00 · platino > 9,00.</p>
+<body class="bg-cl-crema text-cl-dark">
+  <div id="root"></div>
 
-      <div class="filters">
-        <div>
-          <label for="q">Buscar</label>
-          <input id="q" type="text" placeholder="Nombre del café o ciudad…" />
-        </div>
-        <div>
-          <label for="city">Ciudad</label>
-          <select id="city"><option value="">Todas</option></select>
-        </div>
-        <div>
-          <label for="minFinal">Min. nota final</label>
-          <input id="minFinal" type="number" step="0.1" min="0" max="10" value="0"/>
-        </div>
-        <div>
-          <label for="minLocal">Min. Local</label>
-          <input id="minLocal" type="number" step="0.1" min="0" max="10" value="0"/>
-        </div>
-        <div>
-          <label for="minCafe">Min. Café</label>
-          <input id="minCafe" type="number" step="0.1" min="0" max="10" value="0"/>
-        </div>
-        <div>
-          <label for="minMusica">Min. Música</label>
-          <input id="minMusica" type="number" step="0.1" min="0" max="10" value="0"/>
-        </div>
-        <div>
-          <label for="minServicio">Min. Servicio</label>
-          <input id="minServicio" type="number" step="0.1" min="0" max="10" value="0"/>
-        </div>
-        <div>
-          <label for="minUbicacion">Min. Ubicación</label>
-          <input id="minUbicacion" type="number" step="0.1" min="0" max="10" value="0"/>
-        </div>
-        <div>
-          <label for="minPrecio">Min. Precio</label>
-          <input id="minPrecio" type="number" step="0.1" min="0" max="10" value="0"/>
-        </div>
-        <div>
-          <label for="sort">Ordenar</label>
-          <select id="sort">
-            <option value="NotaFinal-desc">Nota final ↓</option>
-            <option value="NotaFinal-asc">Nota final ↑</option>
-            <option value="Café (35%)-desc">Café ↓</option>
-            <option value="Café (35%)-asc">Café ↑</option>
-            <option value="Local (27,5%)-desc">Local ↓</option>
-            <option value="Local (27,5%)-asc">Local ↑</option>
-            <option value="Precio (7,5%)-desc">Precio ↓</option>
-            <option value="Precio (7,5%)-asc">Precio ↑</option>
-          </select>
-        </div>
-      </div>
+  <!-- React + ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <!-- Recharts -->
+  <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+  <!-- Leaflet -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- PapaParse -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <!-- Fuse.js for fuzzy search -->
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
 
-      <div class="controls">
-        <div class="chips" id="chips"></div>
-        <div class="right hint" id="count">Resultados: 0</div>
-      </div>
+  <script>
+    const { useState, useEffect, useMemo, useRef } = React;
+    const { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } = Recharts;
 
-      <div class="controls">
-        <button class="btn" id="reset">Reset filtros</button>
-        <button class="btn secondary" id="loadJson">Importar JSON</button>
-        <input class="btn" id="file" type="file" accept="application/json" />
-      </div>
-    </div>
-  </header>
+    // ---------- Helpers ----------
+    const pesos = { Local: 0.275, Cafe: 0.35, Musica: 0.10, Ubicacion: 0.125, Servicio: 0.075, Precio: 0.075 };
 
-  <main class="wrap">
-    <div class="legend" id="legend">
-      <div class="item"><span class="swatch" style="background:#6D28D9"></span> ≤ 7,25 Morado</div>
-      <div class="item"><span class="swatch" style="background:#CD7F32"></span> 7,25–7,75 Bronce</div>
-      <div class="item"><span class="swatch" style="background:#C0C0C0"></span> 7,75–8,35 Plateado</div>
-      <div class="item"><span class="swatch" style="background:#FFD700"></span> 8,35–9,00 Dorado</div>
-      <div class="item"><span class="swatch" style="background:#E5E4E2"></span> &gt; 9,00 Platino</div>
-      <div class="scale" id="scale"></div>
-    </div>
-    <div class="grid" id="grid"></div>
-    <footer>
-      Hecho con ❤ por Ignacio & Francisca / Como Latte. Pesos: Local 27,5%, Café 35%, Música 10%, Servicio 7,5%, Ubicación 12,5%, Precio 7,5%.
-      <br/>Este HTML es estático (sin servidor). Puedes embeber los datos abajo o importar un JSON.
-    </footer>
-  </main>
+    const colorDeNota = (n) => {
+      if (n > 9) return 'platino';
+      if (n > 8.35) return 'dorado';
+      if (n > 7.75) return 'plata';
+      if (n > 7.25) return 'bronce';
+      return 'morado';
+    };
 
-  <!-- Embed JSON de datos (puedes pegar aquí tu export del Excel como JSON) -->
-  <script id="data" type="application/json">[{"Café": "Wanna Planet", "Ciudad": "Barcelona", "I": 8.5, "F": 8.9, "NotaFinal": 8.85, "Local (27,5%)": 8.8, "Música (10%)": 7.5, "Servicio (7,5%)": 7.5, "Café (35%)": 9.2, "Ubicación (12,5%)": 9.0, "Precio (7,5%)": 8.0}, {"Café": "Three Marks", "Ciudad": "Barcelona", "I": 8.2, "F": 8.4, "NotaFinal": 8.35, "Local (27,5%)": 8.5, "Música (10%)": 8.0, "Servicio (7,5%)": 8.0, "Café (35%)": 8.6, "Ubicación (12,5%)": 8.8, "Precio (7,5%)": 7.2}, {"Café": "Nomad", "Ciudad": "Barcelona", "I": 8.8, "F": 9.1, "NotaFinal": 9.05, "Local (27,5%)": 9.0, "Música (10%)": 8.5, "Servicio (7,5]()
+    const colorHex = (cat) => ({
+      morado: '#7E57C2',
+      bronce: '#CD7F32',
+      plata: '#B0BFC6',
+      dorado: '#C9B037',
+      platino: '#E5E4E2',
+    })[cat] || '#888';
 
+    // Compute derived fields from row
+    function computeCafe(row) {
+      const num = (v) => (v === '' || v == null ? null : Number(v).valueOf());
+      const avg = (a, b) => {
+        const na = num(a), nb = num(b);
+        if (na==null && nb==null) return null;
+        if (na==null) return nb; if (nb==null) return na; return (na+nb)/2;
+      };
+      const local = avg(row.nota_I_local, row.nota_F_local);
+      const cafe = avg(row.nota_I_cafe, row.nota_F_cafe);
+      const musica = avg(row.nota_I_musica, row.nota_F_musica);
+      const ubic = avg(row.nota_I_ubic, row.nota_F_ubic);
+      const serv = avg(row.nota_I_serv, row.nota_F_serv);
+      const prec = avg(row.nota_I_prec, row.nota_F_prec);
+      const nota_final = Number((
+        (local??0)*pesos.Local + (cafe??0)*pesos.Cafe + (musica??0)*pesos.Musica + (ubic??0)*pesos.Ubicacion + (serv??0)*pesos.Servicio + (prec??0)*pesos.Precio
+      ).toFixed(2));
+      const color = colorDeNota(nota_final);
+      return { ...row, local, cafe, musica, ubic, serv, prec, nota_final, color };
+    }
+
+    // ---------- CSV fetch ----------
+    async function loadCSV(path) {
+      return new Promise((resolve, reject) => {
+        Papa.parse(path, {
+          download: true,
+          header: true,
+          dynamicTyping: true,
+          complete: (res) => resolve(res.data.filter(r=>r && r.name)),
+          error: reject,
+          skipEmptyLines: true,
+        })
+      })
+    }
+
+    // ---------- Map Component ----------
+    function MapView({ items, onPick }) {
+      const mapRef = useRef(null);
+      const layerRef = useRef(null);
+
+      useEffect(() => {
+        if (!mapRef.current) {
+          const map = L.map('map', { zoomControl: true });
+          map.setView([41.387, 2.17], 12);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+          mapRef.current = map;
+          layerRef.current = L.layerGroup().addTo(map);
+        }
+      }, []);
+
+      useEffect(() => {
+        if (!mapRef.current || !layerRef.current) return;
+        const layer = layerRef.current;
+        layer.clearLayers();
+        const bounds = [];
+        items.forEach(it => {
+          if (!it.lat || !it.lng) return;
+          const cat = it.color;
+          const pin = L.circleMarker([it.lat, it.lng], {
+            radius: 8,
+            color: colorHex(cat),
+            fillColor: colorHex(cat),
+            fillOpacity: 0.9,
+            weight: 1
+          }).addTo(layer);
+          pin.bindPopup(`<div class='marker-label'>${it.name} · <b>${it.nota_final}</b></div>`);
+          pin.on('click', () => onPick(it));
+          bounds.push([it.lat, it.lng]);
+        });
+        if (bounds.length) mapRef.current.fitBounds(bounds, { padding: [40,40] });
+      }, [items]);
+
+      return <div id="map" className="w-full h-full rounded-2xl shadow-soft"></div>;
+    }
+
+    // ---------- Filters ----------
+    function Filters({ baseMin, baseMax, min, max, setRange, city, setCity, query, setQuery, colors, setColors, order, setOrder, cities }) {
+      const toggleColor = (k) => setColors({ ...colors, [k]: !colors[k] });
+      return (
+        <div className="flex flex-col gap-3 p-3 bg-white rounded-2xl shadow-soft">
+          <div className="flex items-center gap-2">
+            <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar por nombre o dirección" className="w-full px-3 py-2 rounded-xl border border-cl-latte bg-cl-crema focus:outline-none focus:ring-2 focus:ring-cl-caramel"/>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <label className="text-sm">Ciudad/Barrio
+              <select value={city} onChange={e=>setCity(e.target.value)} className="mt-1 w-full px-3 py-2 rounded-xl border bg-white">
+                <option value="">Todas</option>
+                {cities.map(c=> <option key={c} value={c}>{c}</option>)}
+              </select>
+            </label>
+            <label className="text-sm">Ordenar por
+              <select value={order} onChange={e=>setOrder(e.target.value)} className="mt-1 w-full px-3 py-2 rounded-xl border bg-white">
+                <option value="nota_final_desc">Nota final (desc)</option>
+                <option value="cafe_desc">Café (desc)</option>
+                <option value="precio_asc">Precio (asc)</option>
+                <option value="local_desc">Local (desc)</option>
+              </select>
+            </label>
+          </div>
+          <div>
+            <div className="flex justify-between text-xs mb-1">
+              <span>Nota mínima: {min}</span><span>máxima: {max}</span>
+            </div>
+            <input type="range" min={baseMin} max={baseMax} step="0.01" value={min} onChange={e=>setRange([Number(e.target.value), max])} className="w-full"/>
+            <input type="range" min={baseMin} max={baseMax} step="0.01" value={max} onChange={e=>setRange([min, Number(e.target.value)])} className="w-full"/>
+          </div>
+          <div className="flex flex-wrap gap-2 text-sm">
+            {[
+              ['platino','Platino'],
+              ['dorado','Dorado'],
+              ['plata','Plateado'],
+              ['bronce','Bronce'],
+              ['morado','Morado']
+            ].map(([k, label]) => (
+              <button key={k} onClick={()=>toggleColor(k)} className={`px-3 py-1 rounded-full border flex items-center gap-2 ${colors[k]? 'bg-cl-latte' : 'bg-white'}`}>
+                <span className="w-3 h-3 rounded-full" style={{backgroundColor: colorHex(k)}}></span>
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )
+    }
+
+    // ---------- Card ----------
+    function CafeCard({ it, onPick }) {
+      return (
+        <div className="p-4 bg-white rounded-2xl shadow-soft hover:shadow-lg transition cursor-pointer" onClick={()=>onPick(it)}>
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="text-lg font-semibold text-cl-espresso">{it.name}</h3>
+              <p className="text-sm text-cl-dark/70">{it.address} {it.city? '· '+it.city : ''}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xl font-bold" style={{color: colorHex(it.color)}}>{it.nota_final}</span>
+              <span className="px-2 py-1 text-xs rounded-full border" style={{borderColor: colorHex(it.color), color: colorHex(it.color)}}>{it.color}</span>
+            </div>
+          </div>
+          <div className="mt-3">
+            <div className="grid grid-cols-3 gap-2 text-xs">
+              <div className="bg-cl-latte/60 rounded-xl p-2">Local <b>{it.local??'-'}</b></div>
+              <div className="bg-cl-latte/60 rounded-xl p-2">Café <b>{it.cafe??'-'}</b></div>
+              <div className="bg-cl-latte/60 rounded-xl p-2">Música <b>{it.musica??'-'}</b></div>
+              <div className="bg-cl-latte/60 rounded-xl p-2">Ubicación <b>{it.ubic??'-'}</b></div>
+              <div className="bg-cl-latte/60 rounded-xl p-2">Servicio <b>{it.serv??'-'}</b></div>
+              <div className="bg-cl-latte/60 rounded-xl p-2">Precio <b>{it.prec??'-'}</b></div>
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    // ---------- Detail Drawer ----------
+    function Detail({ it, onClose }) {
+      if (!it) return null;
+      const radarData = [
+        { key: 'Local', A: it.local||0 },
+        { key: 'Café', A: it.cafe||0 },
+        { key: 'Música', A: it.musica||0 },
+        { key: 'Ubicación', A: it.ubic||0 },
+        { key: 'Servicio', A: it.serv||0 },
+        { key: 'Precio', A: it.prec||0 },
+      ];
+      const barras = [
+        { name: 'Local', v: (it.local||0)*pesos.Local },
+        { name: 'Café', v: (it.cafe||0)*pesos.Cafe },
+        { name: 'Música', v: (it.musica||0)*pesos.Musica },
+        { name: 'Ubicación', v: (it.ubic||0)*pesos.Ubicacion },
+        { name: 'Servicio', v: (it.serv||0)*pesos.Servicio },
+        { name: 'Precio', v: (it.prec||0)*pesos.Precio },
+      ];
+      return (
+        <div className="fixed inset-0 bg-black/30 z-50 flex">
+          <div className="ml-auto h-full w-full md:w-[520px] bg-cl-crema p-5 overflow-y-auto">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-cl-espresso">{it.name}</h2>
+              <button onClick={onClose} className="px-3 py-1 rounded-xl bg-white border hover:bg-cl-latte">Cerrar</button>
+            </div>
+            <p className="text-sm text-cl-dark/70 mt-1">{it.address} {it.city? '· '+it.city : ''}</p>
+            <div className="mt-4 grid gap-4">
+              <div className="p-4 bg-white rounded-2xl shadow-soft">
+                <h3 className="font-medium mb-2">Perfil (radar)</h3>
+                <div className="w-full h-56">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RadarChart data={radarData} outerRadius="80%">
+                      <PolarGrid />
+                      <PolarAngleAxis dataKey="key" />
+                      <PolarRadiusAxis angle={30} domain={[0,10]} />
+                      <Radar dataKey="A" stroke="#C08A56" fill="#C08A56" fillOpacity={0.35} />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+              <div className="p-4 bg-white rounded-2xl shadow-soft">
+                <h3 className="font-medium mb-2">Aporte ponderado a la nota final</h3>
+                <div className="w-full h-56">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={barras}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="v" fill="#4E342E" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+              <div className="p-4 bg-white rounded-2xl shadow-soft text-sm">
+                <div className="grid grid-cols-2 gap-2">
+                  <div>Local: <b>{it.local??'-'}</b></div>
+                  <div>Café: <b>{it.cafe??'-'}</b></div>
+                  <div>Música: <b>{it.musica??'-'}</b></div>
+                  <div>Ubicación: <b>{it.ubic??'-'}</b></div>
+                  <div>Servicio: <b>{it.serv??'-'}</b></div>
+                  <div>Precio: <b>{it.prec??'-'}</b></div>
+                </div>
+                <div className="mt-3 text-xs text-cl-dark/60">Nota final = 27,5%·Local + 35%·Café + 10%·Música + 12,5%·Ubicación + 7,5%·Servicio + 7,5%·Precio</div>
+              </div>
+              {it.lat && it.lng && (
+                <div className="p-2 bg-white rounded-2xl shadow-soft">
+                  <div className="h-64 w-full" id="miniMap"></div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )
+    }
+
+    // ---------- App ----------
+    function App() {
+      const [raw, setRaw] = useState([]);
+      const [items, setItems] = useState([]);
+      const [minmax, setMinmax] = useState([0, 10]);
+      const [range, setRange] = useState([0, 10]);
+      const [city, setCity] = useState('');
+      const [query, setQuery] = useState('');
+      const [pick, setPick] = useState(null);
+      const [order, setOrder] = useState('nota_final_desc');
+      const [colors, setColors] = useState({ platino:true, dorado:true, plata:true, bronce:true, morado:true });
+
+      // Load CSV from /data/cafes.csv (place your file there)
+      useEffect(() => {
+        loadCSV('./data/cafes.csv').then(rows => {
+          const computed = rows.map(r=>computeCafe(r));
+          setRaw(computed);
+          const vals = computed.map(x=>x.nota_final).filter(v=>!isNaN(v));
+          const mn = Math.min(...vals), mx = Math.max(...vals);
+          const lo = Number(mn.toFixed(2)), hi = Number(mx.toFixed(2));
+          setMinmax([lo, hi]);
+          setRange([lo, hi]);
+        }).catch(err=>{
+          console.error(err);
+        })
+      }, []);
+
+      // Derived cities
+      const cities = useMemo(() => {
+        const s = new Set();
+        raw.forEach(r=>{ if (r.city) s.add(r.city) });
+        return Array.from(s).sort();
+      }, [raw]);
+
+      // Fuse search
+      const fuse = useMemo(() => new Fuse(raw, { keys: ['name','address','city'], threshold: 0.35 }), [raw]);
+
+      // Filtering
+      const filtered = useMemo(() => {
+        let arr = raw;
+        if (query.trim()) arr = fuse.search(query).map(r=>r.item);
+        arr = arr.filter(x => x.nota_final>=range[0] && x.nota_final<=range[1]);
+        if (city) arr = arr.filter(x => (x.city||'')===city);
+        arr = arr.filter(x => colors[x.color]);
+        switch (order) {
+          case 'cafe_desc': arr = [...arr].sort((a,b)=> (b.cafe||0)-(a.cafe||0)); break;
+          case 'precio_asc': arr = [...arr].sort((a,b)=> (a.prec||0)-(b.prec||0)); break;
+          case 'local_desc': arr = [...arr].sort((a,b)=> (b.local||0)-(a.local||0)); break;
+          default: arr = [...arr].sort((a,b)=> b.nota_final - a.nota_final);
+        }
+        return arr;
+      }, [raw, query, range, city, colors, order]);
+
+      // MiniMap inside Detail (re-render on pick)
+      useEffect(() => {
+        if (!pick || !pick.lat || !pick.lng) return;
+        const el = document.getElementById('miniMap');
+        if (!el) return;
+        el.innerHTML = '';
+        const m = L.map('miniMap');
+        m.setView([pick.lat, pick.lng], 16);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(m);
+        L.marker([pick.lat, pick.lng]).addTo(m);
+        return () => m.remove();
+      }, [pick]);
+
+      return (
+        <div className="h-full flex flex-col">
+          {/* Header */}
+          <header className="px-4 py-3 bg-white border-b">
+            <div className="max-w-7xl mx-auto flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-2xl bg-cl-espresso"></div>
+                <h1 className="text-lg font-semibold text-cl-espresso">Como Latte · Mapa de cafés</h1>
+              </div>
+              <a href="#" className="text-sm text-cl-espresso/70 hover:text-cl-espresso">Sube un CSV nuevo</a>
+            </div>
+          </header>
+
+          {/* Main */}
+          <main className="flex-1 max-w-7xl mx-auto w-full p-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-1 space-y-4">
+              <Filters
+                baseMin={minmax[0]} baseMax={minmax[1]}
+                min={range[0]} max={range[1]} setRange={setRange}
+                city={city} setCity={setCity}
+                query={query} setQuery={setQuery}
+                colors={colors} setColors={setColors}
+                order={order} setOrder={setOrder}
+                cities={cities}
+              />
+              <div className="p-3 bg-white rounded-2xl shadow-soft">
+                <h3 className="font-medium text-cl-espresso mb-2">Leyenda</h3>
+                <div className="space-y-1 text-sm">
+                  <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full" style={{backgroundColor: colorHex('platino')}}></span> Platino (> 9)</div>
+                  <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full" style={{backgroundColor: colorHex('dorado')}}></span> Dorado (8,35 – 9)</div>
+                  <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full" style={{backgroundColor: colorHex('plata')}}></span> Plateado (7,75 – 8,35)</div>
+                  <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full" style={{backgroundColor: colorHex('bronce')}}></span> Bronce (7,25 – 7,75)</div>
+                  <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full" style={{backgroundColor: colorHex('morado')}}></span> Morado (≤ 7,25)</div>
+                </div>
+              </div>
+              <div className="p-3 bg-white rounded-2xl shadow-soft text-sm">
+                <h3 className="font-medium text-cl-espresso mb-1">Colores de marca</h3>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="rounded-xl p-3 text-center bg-cl-espresso text-white">Espresso</div>
+                  <div className="rounded-xl p-3 text-center bg-cl-caramel text-white">Caramel</div>
+                  <div className="rounded-xl p-3 text-center bg-cl-latte">Latte</div>
+                  <div className="rounded-xl p-3 text-center bg-cl-crema">Crema</div>
+                  <div className="rounded-xl p-3 text-center bg-cl-dark text-white">Dark</div>
+                  <div className="rounded-xl p-3 text-center bg-cl-moss text-white">Moss</div>
+                </div>
+                <p className="mt-2 text-xs text-cl-dark/70">Puedes ajustar los HEX en el bloque Tailwind del &lt;head&gt;.</p>
+              </div>
+            </div>
+
+            <div className="lg:col-span-2 grid grid-rows-2 gap-4">
+              <div className="row-span-1">
+                <div className="h-full">
+                  <MapView items={filtered} onPick={setPick} />
+                </div>
+              </div>
+              <div className="row-span-1 overflow-y-auto">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {filtered.map(it => <CafeCard key={it.name + it.address} it={it} onPick={setPick} />)}
+                </div>
+              </div>
+            </div>
+          </main>
+
+          <footer className="px-4 py-3 text-center text-xs text-cl-dark/60">Hecho con ❤ por Ignacio & Francisca · Como Latte</footer>
+
+          <Detail it={pick} onClose={()=>setPick(null)} />
+        </div>
+      )
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+  </script>
+</body>
+</html>
